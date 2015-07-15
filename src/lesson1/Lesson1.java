@@ -5,11 +5,8 @@
  */
 package lesson1;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Speakjava (simon.ritter@oracle.com)
@@ -48,7 +45,11 @@ public class Lesson1 {
     List<String> list = Arrays.asList(
       "alpha", "bravo", "charlie", "delta", "echo", "foxtrot");
 
-    /* YOUR CODE HERE */
+    String firstLettersCombined = list.stream()
+      .map((s) -> String.valueOf(s.charAt(0)))
+      .reduce("", String::concat);
+
+    System.out.println(firstLettersCombined);
   }
 
   /**
@@ -60,7 +61,11 @@ public class Lesson1 {
     List<String> list = new ArrayList<>(Arrays.asList(
       "alpha", "bravo", "charlie", "delta", "echo", "foxtrot"));
 
-    /* YOUR CODE HERE */
+    List<String> evenLengthStrings = list.stream()
+      .filter(s -> s.length() % 2 == 0)
+      .collect(Collectors.toList());
+
+    System.out.println(evenLengthStrings);
   }
 
   /**
@@ -72,7 +77,11 @@ public class Lesson1 {
     List<String> list = new ArrayList<>(Arrays.asList(
       "alpha", "bravo", "charlie", "delta", "echo", "foxtrot"));
 
-    /* YOUR CODE HERE */
+    List<String> uppercaseStrings = list.stream()
+      .map(String::toUpperCase)
+      .collect(Collectors.toList());
+
+    System.out.println(uppercaseStrings);
   }
 
   /**
@@ -87,7 +96,11 @@ public class Lesson1 {
     map.put("b", 2);
     map.put("a", 1);
 
-    /* YOUR CODE HERE */
+    String bigBadString = map.entrySet().stream()
+      .map(entry -> entry.getKey() + entry.getValue())
+      .reduce("", String::concat);
+
+    System.out.println(bigBadString);
   }
 
   /**
@@ -98,7 +111,7 @@ public class Lesson1 {
   private void exercise5() {
     List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
-    /* YOUR CODE HERE */
+    new Thread(() -> list.forEach((i) -> System.out.println(i))).start();
   }
 
   /**
