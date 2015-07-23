@@ -47,14 +47,17 @@ public class Lesson2 {
   /**
    * Exercise 1
    *
-   * Create a new list with all the strings from original list converted to 
+   * Create a new list with all the strings from original list converted to
    * lower case and print them out.
    */
   private void exercise1() {
     List<String> list = Arrays.asList(
         "The", "Quick", "BROWN", "Fox", "Jumped", "Over", "The", "LAZY", "DOG");
 
-    /* YOUR CODE HERE */
+    List<String> result = list.stream().map(String::toLowerCase)
+      .collect(Collectors.toList());
+
+    result.forEach(System.out::println);
   }
 
   /**
@@ -67,7 +70,12 @@ public class Lesson2 {
     List<String> list = Arrays.asList(
         "The", "Quick", "BROWN", "Fox", "Jumped", "Over", "The", "LAZY", "DOG");
 
-    /* YOUR CODE HERE */
+    List<String> result = list.stream()
+      .filter((s -> s.length() %2 != 0))
+      .map(String::toLowerCase)
+      .collect(Collectors.toList());
+
+    result.forEach(System.out::println);
   }
 
   /**
@@ -80,7 +88,9 @@ public class Lesson2 {
     List<String> list = Arrays.asList(
         "The", "quick", "brown", "fox", "jumped", "over", "the", "lazy", "dog");
 
-    /* YOUR CODE HERE */
+    String result = list.stream().skip(1).limit(3).collect(Collectors.joining("-"));
+
+    System.out.println(result);
   }
 
   /**
@@ -89,42 +99,58 @@ public class Lesson2 {
   private void exercise4() throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(
         Paths.get("SonnetI.txt"), StandardCharsets.UTF_8)) {
-      /* YOUR CODE HERE */
+      long count = reader.lines().count();
+      System.out.println(count);
     }
   }
-  
+
   /**
    * Using the BufferedReader to access the file, create a list of words with
    * no duplicates contained in the file.  Print the words.
-   * 
+   *
    * HINT: A regular expression, WORD_REGEXP, is already defined for your use.
    */
   private void exercise5() throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(
         Paths.get("SonnetI.txt"), StandardCharsets.UTF_8)) {
-      /* YOUR CODE HERE */
+      Stream<String> result = reader.lines()
+        .flatMap((s) -> Arrays.stream(s.split(WORD_REGEXP))).distinct();
+
+      System.out.println(result.collect(Collectors.joining(", ")));
     }
   }
-  
+
   /**
-   * Using the BufferedReader to access the file create a list of words from 
+   * Using the BufferedReader to access the file create a list of words from
    * the file, converted to lower-case and with duplicates removed, which is
    * sorted by natural order.  Print the contents of the list.
    */
   private void exercise6() throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(
         Paths.get("SonnetI.txt"), StandardCharsets.UTF_8)) {
-      /* YOUR CODE HERE */
+      Stream<String> result = reader.lines()
+        .map(String::toLowerCase)
+        .flatMap((s) -> Arrays.stream(s.split(WORD_REGEXP)))
+        .distinct()
+        .sorted();
+
+      System.out.println(result.collect(Collectors.joining(", ")));
     }
   }
-  
+
   /**
    * Modify exercise6 so that the words are sorted by length
    */
   private void exercise7() throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(
         Paths.get("SonnetI.txt"), StandardCharsets.UTF_8)) {
-      /* YOUR CODE HERE */
+      Stream<String> result = reader.lines()
+        .map(String::toLowerCase)
+        .flatMap((s) -> Arrays.stream(s.split(WORD_REGEXP)))
+        .distinct()
+        .sorted((s1,s2) -> s1.length() - s2.length());
+
+      System.out.println(result.collect(Collectors.joining(", ")));
     }
   }
 
