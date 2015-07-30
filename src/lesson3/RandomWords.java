@@ -1,6 +1,6 @@
 /**
  * Copyright © 2014, Oracle and/or its affiliates. All rights reserved.
- * 
+ *
  * JDK 8 MOOC Lesson 3 homework
  */
 package lesson3;
@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Class to generate a list of random words
@@ -24,13 +25,13 @@ public class RandomWords {
 
   /**
    * Constructor
-   * 
+   *
    * @throws IOException If the source words file cannot be read
    */
-  public RandomWords() throws IOException {   
+  public RandomWords() throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(Paths.get("words"))) {
-      sourceWords = null;    // YOUR CODE HERE
-      
+      sourceWords = reader.lines().collect(Collectors.toList());
+
       System.out.println("Loaded " + sourceWords.size() + " words");
     }
   }
@@ -43,7 +44,10 @@ public class RandomWords {
    */
   public List<String> createList(int listSize) {
     Random rand = new Random();
-    List<String> wordList = null; // YOUR CODE HERE
+    IntStream indexes = rand.ints(0, sourceWords.size()-1).limit(listSize);
+    List<String> wordList = indexes
+      .mapToObj((i) -> sourceWords.get(i))
+      .collect(Collectors.toList());
 
     return wordList;
   }

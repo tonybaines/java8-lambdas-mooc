@@ -6,11 +6,14 @@
 package lesson3;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Simon Ritter (@speakjava)
@@ -19,7 +22,7 @@ import java.util.stream.Stream;
 public class Lesson3 {
   /* How many times to repeat the test.  5 seems to give reasonable results */
   private static final int RUN_COUNT = 5;
-  
+
   /**
    * Used by the measure method to determine how long a Supplier takes to
    * return a result.
@@ -64,27 +67,38 @@ public class Lesson3 {
    *
    * @param wordList The subset of words whose distances to compute
    * @param parallel Whether to run in parallel
-   * @return Matrix of Levenshtein distances
+   * @return Matrix of Levenshtein distances [word index from list][array of distances]
    */
   static int[][] computeLevenshtein(List<String> wordList, boolean parallel) {
     final int LIST_SIZE = wordList.size();
     int[][] distances = new int[LIST_SIZE][LIST_SIZE];
-    
-    // YOUR CODE HERE
-    
+
+    IntStream indexes = parallel ? IntStream.range(0, LIST_SIZE).parallel() : IntStream.range(0, LIST_SIZE);
+
+    indexes
+      .forEach((i1) -> IntStream.range(0, LIST_SIZE)
+        .forEach((i2) -> distances[i1][i2] = Levenshtein.lev(wordList.get(i1), wordList.get(i2))));
+
     return distances;
   }
-  
+
   /**
    * Process a list of random strings and return a modified list
-   * 
+   *
    * @param wordList The subset of words whose distances to compute
    * @param parallel Whether to run in parallel
    * @return The list processed in whatever way you want
    */
   static List<String> processWords(List<String> wordList, boolean parallel) {
-    // YOUR CODE HERE
-    
+    Stream<String> wordStream = parallel ? wordList.parallelStream() : wordList.stream();
+
+    wordStream
+      .sorted()
+      .filter(s1 -> !s1.isEmpty())
+      .map(String::toUpperCase)
+      .distinct()
+      .collect(Collectors.toList());
+
     return null;
   }
 
@@ -100,8 +114,8 @@ public class Lesson3 {
 
     measure("Sequential", () -> computeLevenshtein(wordList, false));
     measure("Parallel", () -> computeLevenshtein(wordList, true));
-    
-//    measure("Sequential", () -> processWords(wordList, false));
-//    measure("Parallel", () -> processWords(wordList, true));
+
+    measure("Sequential", () -> processWords(wordList, false));
+    measure("Parallel", () -> processWords(wordList, true));
   }
 }
